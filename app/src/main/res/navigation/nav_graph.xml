@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/scanFragment">
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.example.nfc_sample_kotlin.View.ScanFragment"
+        android:label="NFC Scan"
+        tools:layout="@layout/fragment_scan" />
+    <fragment
+        android:id="@+id/writeFragment"
+        android:name="com.example.nfc_sample_kotlin.View.WriteFragment"
+        android:label="NFC Write"
+        tools:layout="@layout/fragment_write" />
+</navigation>

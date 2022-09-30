@@ -1,8 +1,8 @@
-package com.example.nfc_sample_kotlin.Adapter
+package com.example.nfc_sample_kotlin.View.Adapter
 
 import android.view.MotionEvent
 import android.view.View
 
-interface OnScanDataTouchListener {
+interface OnDataTouchListener {
     fun onTouch(message: String, position: Int,view :View,event: MotionEvent)
 }

@@ -1,4 +1,6 @@
 package com.example.nfc_sample_kotlin.Model
 
-data class Message (val message: String){
+import com.example.nfc_sample_kotlin.RecordType
+
+data class Message(val recordType: RecordType, val message: String) {
 }

@@ -17,16 +17,15 @@ abstract class BaseActivity<VB : ViewBinding>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         _binding = inflate.invoke(layoutInflater)
         setContentView(binding.root)
-        logi("onCreate: ${this.hashCode()}")
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
     }
 
 }

@@ -1,16 +1,19 @@
-package com.example.nfc_sample_kotlin.Model
+package com.example.nfc_sample_kotlin.api
 
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
-import android.os.Parcelable
+import com.example.nfc_sample_kotlin.Model.Message
+import com.example.nfc_sample_kotlin.RecordType
 import kotlin.experimental.and
 
 
-object ParseNdefMessage {
+class ParseNdefMessageImpl : ParseNdefMessage {
 
-    private val URI_PREFIX_MAP: Array<String> = arrayOf(
+    companion object{
+
+        val URI_PREFIX_MAP: Array<String> = arrayOf(
             "", // 0x00
             "http://www.", // 0x01
             "https://www.", // 0x02
@@ -48,19 +51,20 @@ object ParseNdefMessage {
             "urn:epc:", // 0x22
         )
 
+    }
 
-    fun parseToMessage(intent: Intent): List<Message> {
+    override suspend fun parseToMessage(intent: Intent): List<Message> {
 
         val listNdefPayload: MutableList<Message> = mutableListOf()
         (parseIntent(intent).records).forEach {
             if (it.tnf == NdefRecord.TNF_WELL_KNOWN) {
 
                 if (it.type.contentEquals(NdefRecord.RTD_TEXT)) {
-                    listNdefPayload.add(Message(parseRTDText(it.payload)))
+                    listNdefPayload.add(Message(RecordType.Text,parseRTDText(it.payload)))
                 }
 
                 if (it.type.contentEquals(NdefRecord.RTD_URI)) {
-                    listNdefPayload.add(Message(parseRTDURI(it.payload)))
+                    listNdefPayload.add(Message(RecordType.Uri,parseRTDURI(it.payload)))
                 }
 
             }
@@ -68,9 +72,10 @@ object ParseNdefMessage {
         return listNdefPayload
     }
 
-    private fun parseIntent(intent: Intent): NdefMessage{
+    private fun parseIntent(intent: Intent): NdefMessage {
 
-        return intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES).let { it?.get(0) as NdefMessage }
+        return intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+            .let { it?.get(0) as NdefMessage }
     }
 
     private fun parseRTDText(payload: ByteArray): String {
@@ -88,10 +93,9 @@ object ParseNdefMessage {
 
     private fun parseRTDURI(payload: ByteArray): String {
         val prefix = URI_PREFIX_MAP[(payload[0].toInt() and 0xff)]
-        val uri = String(payload,1,payload.size-1,Charsets.UTF_8)
-        return prefix+uri
+        val uri = String(payload, 1, payload.size - 1, Charsets.UTF_8)
+        return prefix + uri
     }
-
 
 
 }

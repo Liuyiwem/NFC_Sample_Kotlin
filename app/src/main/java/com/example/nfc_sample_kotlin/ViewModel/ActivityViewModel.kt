@@ -1,33 +1,35 @@
 package com.example.nfc_sample_kotlin.ViewModel
 
 import android.content.Intent
-import android.os.Parcelable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+
 import androidx.lifecycle.ViewModel
-import com.example.nfc_sample_kotlin.Model.Message
-import com.example.nfc_sample_kotlin.Repository.Repository
+import androidx.lifecycle.viewModelScope
+import com.example.nfc_sample_kotlin.logi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 class ActivityViewModel : ViewModel() {
-    private val repository = Repository()
 
-    private val _newIntent = MutableLiveData<Intent> ()
-    val newIntent : LiveData<Intent> get() = _newIntent
+    private val _newIntent = MutableSharedFlow<Intent>(replay = 0)
+    val newIntent = _newIntent.asSharedFlow()
 
-    private val _listNdefPayload = MutableLiveData<List<Message>>()
-    val listNdefPayload : LiveData<List<Message>> get() = _listNdefPayload
-
-    fun setNewIntent(intent: Intent){
-        _newIntent.value = intent
+    @Synchronized
+    fun setNewIntent(intent: Intent) {
+        viewModelScope.launch {
+            _newIntent.emit(intent)
+        }
     }
 
-    fun parseNdefMessage(intent: Intent){
-        _listNdefPayload.value = repository.parseNdefMessage(intent)
+    init {
+        logi("scanViewOnCreated: ")
+
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        logi("onCleared: ")
 
-
-
-
+    }
 
 }

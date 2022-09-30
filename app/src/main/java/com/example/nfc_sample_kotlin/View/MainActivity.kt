@@ -20,6 +20,7 @@ import com.example.nfc_sample_kotlin.R
 import com.example.nfc_sample_kotlin.TAG
 import com.example.nfc_sample_kotlin.ViewModel.ActivityViewModel
 import com.example.nfc_sample_kotlin.databinding.ActivityMainBinding
+import com.example.nfc_sample_kotlin.logi
 
 class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
 
@@ -33,6 +34,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         super.onCreate(savedInstanceState)
         initView()
         checkNFCAdapter()
+        logi("onCreate")
+
     }
 
     override fun onResume() {
@@ -44,33 +47,37 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     override fun onPause() {
         super.onPause()
         mNfcAdapter?.disableForegroundDispatch(this)
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        logi("onDestroy")
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
         if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
-//           val rawNdefMessage = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
             viewModel.setNewIntent(intent)
-
-            Log.d(TAG, "onNewIntent: ${intent.hashCode()}")
+            logi("onNewIntent: ${intent.hashCode()}")
 
         }
-
     }
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+
     }
 
     private fun initView() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(super.binding.fragmentContainerView.id) as NavHostFragment
         navController = navHostFragment.navController
-
         val bottomNavigationView = binding.bottomNav
+        bottomNavigationView.outlineProvider = null
         bottomNavigationView.setupWithNavController(navController)
         appBarConfiguration = AppBarConfiguration(setOf(R.id.scanFragment,R.id.writeFragment))
         setupActionBarWithNavController(navController,appBarConfiguration)
+
     }
 
     private fun checkNFCAdapter() {
@@ -82,6 +89,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             val myDialog = builder.create()
             myDialog.setCanceledOnTouchOutside(false)
             myDialog.show()
+
         }
 
         if (!mNfcAdapter!!.isEnabled) {
@@ -93,6 +101,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             val myDialog = builder.create()
             myDialog.setCanceledOnTouchOutside(false)
             myDialog.show()
+
         }
 
         if (mNfcAdapter!!.isEnabled) {

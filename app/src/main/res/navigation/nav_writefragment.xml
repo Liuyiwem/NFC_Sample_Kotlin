@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_writefragment"
+    app:startDestination="@id/writeFragment">
+    <fragment
+        android:id="@+id/writeFragment"
+        android:name="com.example.nfc_sample_kotlin.View.WriteFragment"
+        android:label="NFC Write"
+        tools:layout="@layout/fragment_write" >
+        <action
+            android:id="@+id/action_writeFragment_to_addRecordFragment"
+            app:destination="@id/addRecordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addRecordFragment"
+        android:name="com.example.nfc_sample_kotlin.View.AddRecordFragment"
+        android:label="Add Ndef Record"
+        tools:layout="@layout/add_record_fragment" >
+        <action
+            android:id="@+id/action_addRecordFragment_to_writeFragment"
+            app:destination="@id/writeFragment"
+            app:popUpTo="@id/writeFragment"
+            app:popUpToInclusive="true"
+
+            />
+    </fragment>
+</navigation>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/format_text"
+        android:title="Text"/>
+    <item
+        android:id="@+id/format_uri"
+        android:title="URI/URL"/>
+
+</menu>

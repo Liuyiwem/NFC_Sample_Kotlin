@@ -9,9 +9,5 @@
         android:name="com.example.nfc_sample_kotlin.View.ScanFragment"
         android:label="NFC Scan"
         tools:layout="@layout/fragment_scan" />
-    <fragment
-        android:id="@+id/writeFragment"
-        android:name="com.example.nfc_sample_kotlin.View.WriteFragment"
-        android:label="NFC Write"
-        tools:layout="@layout/fragment_write" />
+    <include app:graph="@navigation/nav_writefragment" />
 </navigation>

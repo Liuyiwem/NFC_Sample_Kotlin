@@ -8,17 +8,25 @@
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1955" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/ic_message.xml" value="0.1955" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_background.xml" value="0.1815" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_button.xml" value="0.2985" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_line.xml" value="0.2985" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_nav_line.xml" value="0.1955" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_nfc.xml" value="0.1955" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_rectangle.xml" value="0.1945" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_selector.xml" value="0.1945" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/item_withoutline.xml" value="0.1945" />
-        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/activity_main.xml" value="0.22" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/nav_text_color_state.xml" value="0.1945" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/drawable/zz.xml" value="0.158" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/activity_main.xml" value="0.3483009708737864" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/add_record_fragment.xml" value="0.33" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/fragment_scam.xml" value="0.358695652173913" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/fragment_scan.xml" value="0.25" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/fragment_write.xml" value="0.33" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/item_message.xml" value="0.5" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/item_mm.xml" value="0.18645833333333334" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/layout/item_scan.xml" value="0.33" />
         <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/menu/bottom_nav.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/nick_liu/AndroidStudioProjects/NFC_Sample_Kotlin/app/src/main/res/menu/ndef_format_menu.xml" value="0.3651041666666667" />
       </map>
     </option>
   </component>

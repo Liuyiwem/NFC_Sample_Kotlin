@@ -1,10 +1,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.NFC_Sample_Kotlin" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.NFC_Sample_Kotlin" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/teal_200</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorOnPrimary">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorTertiary">@color/black</item>
+        <item name="colorOnContainer">@color/white</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
     </style>
+
+    <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="button">
+        <item name= "android:background">?colorOnPrimary</item>
+        <item name="android:textColor">?colorAccent</item>
+
+    </style>
+
 </resources>

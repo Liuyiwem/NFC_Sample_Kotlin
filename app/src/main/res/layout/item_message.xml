@@ -36,7 +36,7 @@
             android:layout_width="250dp"
             android:layout_height="60dp"
             android:text="NdefMessage"
-            android:textColor="@color/black"
+            android:textColor="?colorAccent"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -44,8 +44,5 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </ScrollView>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

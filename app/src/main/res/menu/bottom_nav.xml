@@ -4,7 +4,7 @@
         android:id="@+id/scanFragment"
         android:title="SCAN"/>
     <item
-        android:id="@+id/writeFragment"
+        android:id="@+id/nav_writefragment"
         android:title="WRITE"/>
 
 </menu>

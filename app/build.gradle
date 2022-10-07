@@ -21,6 +21,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "and_nfc_sample_kotlin_v${variant.versionName}.apk"
+                }
+            }
         }
     }
     compileOptions {
@@ -46,7 +51,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
     implementation 'androidx.databinding:databinding-runtime:4.2.2'
-    implementation 'androidx.paging:paging-guava:3.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
@@ -54,4 +58,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    def koin_android_version= "3.2.2"
+    implementation "io.insert-koin:koin-android:$koin_android_version"
+    implementation "io.insert-koin:koin-android-compat:$koin_android_version"
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_android_version"
+    implementation "io.insert-koin:koin-androidx-navigation:$koin_android_version"
 }

@@ -6,7 +6,7 @@
     app:startDestination="@id/scanFragment">
     <fragment
         android:id="@+id/scanFragment"
-        android:name="com.example.nfc_sample_kotlin.View.ScanFragment"
+        android:name="com.example.nfc_sample_kotlin.view.ScanFragment"
         android:label="NFC Scan"
         tools:layout="@layout/fragment_scan" />
     <include app:graph="@navigation/nav_writefragment" />

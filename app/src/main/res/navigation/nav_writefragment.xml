@@ -6,7 +6,7 @@
     app:startDestination="@id/writeFragment">
     <fragment
         android:id="@+id/writeFragment"
-        android:name="com.example.nfc_sample_kotlin.View.WriteFragment"
+        android:name="com.example.nfc_sample_kotlin.view.WriteFragment"
         android:label="NFC Write"
         tools:layout="@layout/fragment_write" >
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/addRecordFragment"
-        android:name="com.example.nfc_sample_kotlin.View.AddRecordFragment"
+        android:name="com.example.nfc_sample_kotlin.view.AddRecordFragment"
         android:label="Add Ndef Record"
         tools:layout="@layout/add_record_fragment" >
         <action

@@ -1,55 +1,63 @@
 package com.example.nfc_sample_kotlin.api
 
 import android.content.Intent
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
-import android.nfc.NfcAdapter
-import android.nfc.Tag
+import android.nfc.*
 import android.nfc.tech.Ndef
-import com.example.nfc_sample_kotlin.Model.Message
-import com.example.nfc_sample_kotlin.RecordType
+import android.os.RemoteException
+import com.example.nfc_sample_kotlin.model.Message
+import com.example.nfc_sample_kotlin.enum.RecordType
+import com.example.nfc_sample_kotlin.enum.WriteDataState
+import java.io.IOException
 
 
 class WriteNdefMessageImpl : WriteNdefMessage {
 
     @Synchronized
-    override suspend fun writeTag(intent: Intent, writeDataList: List<Message>): Boolean {
+    override suspend fun writeTag(intent: Intent, writeDataList: List<Message>): WriteDataState {
 
-        val ndefMessage = combineNdefMessage(writeDataList)
-        val tag = getNdefTag(intent)
+        try {
+            val ndefMessage = combineNdefMessage(writeDataList)
+            val tag = getNdefTag(intent)
+            val ndef = Ndef.get(tag)
+            if (ndef != null) {
 
                 try {
-                    val ndef = Ndef.get(tag)
+                    if (!ndef.isWritable) {
+                        return WriteDataState.TagReadOnly
 
-                    try {
-                        if (!ndef.isConnected) {
-                            ndef.connect()
-                            ndef.writeNdefMessage(ndefMessage)
-                            return true
-
-                        }
-                        if (!ndef.isWritable) {
-                            return false
-
-                        }
-                        if (ndef.maxSize < ndefMessage.byteArrayLength) {
-                            return false
-
-                        }
-                    } catch (e: Exception) {
-                        return false
-
-                    } finally {
-                        ndef.close()
                     }
-                } catch (e: Exception) {
-                    return false
-                }
+                    if (ndef.maxSize < ndefMessage.byteArrayLength) {
+                        return WriteDataState.OverSize
 
-        return false
+                    }
+                    if (!ndef.isConnected) {
+                        ndef.connect()
+                        ndef.writeNdefMessage(ndefMessage)
+                        return WriteDataState.WriteSuccess
+
+                    }
+                } catch (e: IOException) {
+                    return WriteDataState.ConnectFail
+
+                } catch (e: FormatException) {
+                    return WriteDataState.WrongFormat
+                } finally {
+                    ndef.close()
+                }
+            }
+        } catch (e: RemoteException) {
+            return WriteDataState.GetTagFail
+        }catch (e: KotlinNullPointerException){
+            return WriteDataState.NullRecord
+        }
+
+        return WriteDataState.WriteFail
     }
 
     private fun combineNdefMessage(writeDataList: List<Message>): NdefMessage {
+        if (writeDataList.isEmpty()){
+            throw KotlinNullPointerException("Ndef record is empty")
+        }
 
         val ndefRecords = mutableListOf<NdefRecord>()
         writeDataList.forEach { Message ->
@@ -67,8 +75,8 @@ class WriteNdefMessageImpl : WriteNdefMessage {
 
     }
 
-    private fun getNdefTag(intent: Intent): Tag? {
+    private fun getNdefTag(intent: Intent): Tag {
 
-        return intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+        return intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)!!
     }
 }

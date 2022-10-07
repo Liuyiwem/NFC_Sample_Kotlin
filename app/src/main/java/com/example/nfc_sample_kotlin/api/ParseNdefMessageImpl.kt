@@ -4,8 +4,8 @@ import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
-import com.example.nfc_sample_kotlin.Model.Message
-import com.example.nfc_sample_kotlin.RecordType
+import com.example.nfc_sample_kotlin.model.Message
+import com.example.nfc_sample_kotlin.enum.RecordType
 import kotlin.experimental.and
 
 
@@ -55,21 +55,21 @@ class ParseNdefMessageImpl : ParseNdefMessage {
 
     override suspend fun parseToMessage(intent: Intent): List<Message> {
 
-        val listNdefPayload: MutableList<Message> = mutableListOf()
+        val scanDataList: MutableList<Message> = mutableListOf()
         (parseIntent(intent).records).forEach {
             if (it.tnf == NdefRecord.TNF_WELL_KNOWN) {
 
                 if (it.type.contentEquals(NdefRecord.RTD_TEXT)) {
-                    listNdefPayload.add(Message(RecordType.Text,parseRTDText(it.payload)))
+                    scanDataList.add(Message(scanDataList.size, RecordType.Text,parseRTDText(it.payload)))
                 }
 
                 if (it.type.contentEquals(NdefRecord.RTD_URI)) {
-                    listNdefPayload.add(Message(RecordType.Uri,parseRTDURI(it.payload)))
+                    scanDataList.add(Message(scanDataList.size, RecordType.Uri,parseRTDURI(it.payload)))
                 }
 
             }
         }
-        return listNdefPayload
+        return scanDataList.toList()
     }
 
     private fun parseIntent(intent: Intent): NdefMessage {
@@ -96,6 +96,5 @@ class ParseNdefMessageImpl : ParseNdefMessage {
         val uri = String(payload, 1, payload.size - 1, Charsets.UTF_8)
         return prefix + uri
     }
-
 
 }

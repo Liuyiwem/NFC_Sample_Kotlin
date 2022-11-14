@@ -17,10 +17,9 @@ class DataAdapter : ListAdapter<Message,DataViewHolder>(DataDiffItemCallback()) 
         val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DataViewHolder(binding)
     }
-
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
+
         holder.bind(getItem(position),position)
         holder.onDataTouchListener = onDataTouchListener
-
     }
 }

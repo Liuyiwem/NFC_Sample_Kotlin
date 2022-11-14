@@ -35,6 +35,11 @@ class WriteFragmentViewModel(private val writeDataRepository: WriteDataRepositor
         _writeData.value = writeDataRepository.moveWriteData(startPosition, endPosition)
     }
 
+    fun editItemData(position: Int, recordType: RecordType, editItemData: String) {
+        _writeData.value = writeDataRepository.editWriteData(position,recordType,editItemData)
+    }
+
+
     fun writeSavedData(intent: Intent) {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -46,7 +51,7 @@ class WriteFragmentViewModel(private val writeDataRepository: WriteDataRepositor
     }
 
     init {
-        logi("scanViewOnCreated: ")
+        logi("writeViewOnCreated: ")
     }
 
     override fun onCleared() {

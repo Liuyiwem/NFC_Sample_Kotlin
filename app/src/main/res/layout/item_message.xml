@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_width="260dp"
+        android:layout_width="280dp"
         android:layout_height="60dp"
         android:layout_marginStart="20dp"
         android:fillViewport="true">
@@ -37,7 +37,6 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="250dp"
             android:layout_height="60dp"
-            android:textIsSelectable="true"
             android:text="NdefMessage"
             android:autoLink="all"
             android:textColor="?colorAccent"

@@ -5,10 +5,10 @@ import com.example.nfc_sample_kotlin.model.Message
 
 class DataDiffItemCallback: DiffUtil.ItemCallback<Message>() {
     override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.message == newItem.message
     }
 
     override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
-        return oldItem.message == newItem.message
+        return oldItem == newItem
     }
 }

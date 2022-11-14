@@ -13,7 +13,7 @@ class WriteDataRepositoryImpl(private val writeNdefMessage: WriteNdefMessage) :
     private val _writeDataList: MutableList<Message> = mutableListOf()
 
     override fun saveWriteData(recordType: RecordType, writeData: String): List<Message> {
-        _writeDataList.add(Message(_writeDataList.size,recordType, writeData))
+        _writeDataList.add(Message(recordType, writeData))
         return _writeDataList.toList()
     }
 
@@ -24,6 +24,15 @@ class WriteDataRepositoryImpl(private val writeNdefMessage: WriteNdefMessage) :
 
     override fun moveWriteData(startPosition: Int, endPosition: Int): List<Message> {
         Collections.swap(_writeDataList,startPosition,endPosition)
+        return _writeDataList.toList()
+    }
+
+    override fun editWriteData(
+        position: Int,
+        recordType: RecordType,
+        editItemData: String
+    ): List<Message> {
+        _writeDataList[position] = Message(recordType,editItemData)
         return _writeDataList.toList()
     }
 

@@ -1,11 +1,12 @@
 package com.example.nfc_sample_kotlin.view
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,9 +23,17 @@ import com.example.nfc_sample_kotlin.view.adapter.OnDataTouchListener
 import com.example.nfc_sample_kotlin.viewmodel.ActivityViewModel
 import com.example.nfc_sample_kotlin.viewmodel.WriteFragmentViewModel
 import com.example.nfc_sample_kotlin.databinding.FragmentWriteBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.navigation.koinNavGraphViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+
+
+const val writeFragmentClickItem = "WriteFragmentClickItem"
+const val writeFragmentClickPosition = "WriteFragmentClickPosition"
+const val writedItem = "Item"
+const val writedPosition = "Position"
 
 class WriteFragment : BaseFragment<FragmentWriteBinding>(FragmentWriteBinding::inflate) {
 
@@ -75,6 +84,15 @@ class WriteFragment : BaseFragment<FragmentWriteBinding>(FragmentWriteBinding::i
                     view.parent.requestDisallowInterceptTouchEvent(true)
 
                 }
+                if (event.action == MotionEvent.ACTION_UP) {
+                    logi("Action_up $position")
+                    setFragmentResult(writeFragmentClickItem, bundleOf(writedItem to item))
+                    setFragmentResult(
+                        writeFragmentClickPosition,
+                        bundleOf(writedPosition to position)
+                    )
+                    findNavController().navigate(R.id.action_writeFragment_to_addRecordFragment)
+                }
             }
         }
 
@@ -104,6 +122,7 @@ class WriteFragment : BaseFragment<FragmentWriteBinding>(FragmentWriteBinding::i
     }
 
     private fun initCollect() {
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
@@ -128,15 +147,47 @@ class WriteFragment : BaseFragment<FragmentWriteBinding>(FragmentWriteBinding::i
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 writeFragmentViewModel.writeNdefResult.collect {
                     logi("$it")
-                    when(it){
-                        WriteDataState.WriteSuccess->setAlertDialog("Write Nfc Tag Succeed", "OK", false)
-                        WriteDataState.WriteFail->setAlertDialog("Write Nfc Tag failed", "ok", false)
-                        WriteDataState.TagReadOnly->setAlertDialog("Tag is read only", "ok", false)
-                        WriteDataState.OverSize->setAlertDialog("NDEF message over size", "ok", false)
-                        WriteDataState.NullRecord->setAlertDialog("NDEF Record is null", "ok", false)
-                        WriteDataState.ConnectFail->setAlertDialog("Connect NFC tag failed", "ok", false)
-                        WriteDataState.WrongFormat->setAlertDialog("Not NDEF message format ", "ok", false)
-                        WriteDataState.GetTagFail->setAlertDialog("Tag is not NDEF type", "ok", false)
+                    when (it) {
+                        WriteDataState.WriteSuccess -> setAlertDialog(
+                            "Write Nfc Tag Succeed",
+                            "OK",
+                            false
+                        )
+                        WriteDataState.WriteFail -> setAlertDialog(
+                            "Write Nfc Tag failed",
+                            "ok",
+                            false
+                        )
+                        WriteDataState.TagReadOnly -> setAlertDialog(
+                            "Tag is read only",
+                            "ok",
+                            false
+                        )
+                        WriteDataState.OverSize -> setAlertDialog(
+                            "NDEF message over size",
+                            "ok",
+                            false
+                        )
+                        WriteDataState.NullRecord -> setAlertDialog(
+                            "NDEF Record is null",
+                            "ok",
+                            false
+                        )
+                        WriteDataState.ConnectFail -> setAlertDialog(
+                            "Connect NFC tag failed",
+                            "ok",
+                            false
+                        )
+                        WriteDataState.WrongFormat -> setAlertDialog(
+                            "Not NDEF message format ",
+                            "ok",
+                            false
+                        )
+                        WriteDataState.GetTagFail -> setAlertDialog(
+                            "Tag is not NDEF type",
+                            "ok",
+                            false
+                        )
 
                     }
                 }
@@ -176,7 +227,8 @@ class WriteFragment : BaseFragment<FragmentWriteBinding>(FragmentWriteBinding::i
         builder = AlertDialog.Builder(requireContext())
         builder?.apply {
             setTitle(title)
-            setPositiveButton(button
+            setPositiveButton(
+                button
             ) { dialog, _ ->
                 connectTagEnable = status
                 dialog?.cancel()

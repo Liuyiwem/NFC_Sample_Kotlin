@@ -11,7 +11,9 @@
         tools:layout="@layout/fragment_write" >
         <action
             android:id="@+id/action_writeFragment_to_addRecordFragment"
-            app:destination="@id/addRecordFragment" />
+            app:destination="@id/addRecordFragment"
+            app:popUpTo="@id/writeFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/addRecordFragment"
@@ -21,7 +23,7 @@
         <action
             android:id="@+id/action_addRecordFragment_to_writeFragment"
             app:destination="@id/writeFragment"
-            app:popUpTo="@id/writeFragment"
+            app:popUpTo="@id/addRecordFragment"
             app:popUpToInclusive="true"
 
             />

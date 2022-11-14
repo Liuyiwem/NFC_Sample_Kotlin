@@ -13,6 +13,8 @@ interface WriteDataRepository {
 
     fun moveWriteData(startPosition: Int, endPosition: Int): List<Message>
 
+    fun editWriteData(position: Int, recordType: RecordType, editItemData: String):List<Message>
+
     suspend fun writeSavedData(intent: Intent): WriteDataState
 
 

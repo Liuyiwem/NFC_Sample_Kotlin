@@ -60,11 +60,11 @@ class ParseNdefMessageImpl : ParseNdefMessage {
             if (it.tnf == NdefRecord.TNF_WELL_KNOWN) {
 
                 if (it.type.contentEquals(NdefRecord.RTD_TEXT)) {
-                    scanDataList.add(Message(scanDataList.size, RecordType.Text,parseRTDText(it.payload)))
+                    scanDataList.add(Message(RecordType.Text,parseRTDText(it.payload)))
                 }
 
                 if (it.type.contentEquals(NdefRecord.RTD_URI)) {
-                    scanDataList.add(Message(scanDataList.size, RecordType.Uri,parseRTDURI(it.payload)))
+                    scanDataList.add(Message(RecordType.Uri,parseRTDURI(it.payload)))
                 }
 
             }

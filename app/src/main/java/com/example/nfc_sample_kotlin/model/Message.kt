@@ -1,6 +1,10 @@
 package com.example.nfc_sample_kotlin.model
 
+import android.os.Parcelable
 import com.example.nfc_sample_kotlin.enum.RecordType
+import kotlinx.parcelize.Parcelize
 
-data class Message(val id: Int, val recordType: RecordType, val message: String) {
+
+@Parcelize
+data class Message(val recordType: RecordType, val message: String) : Parcelable {
 }

@@ -2,8 +2,8 @@ package com.example.nfc_sample_kotlin.repository
 
 import android.content.Intent
 import com.example.nfc_sample_kotlin.model.Message
-import com.example.nfc_sample_kotlin.enum.RecordType
-import com.example.nfc_sample_kotlin.enum.WriteDataState
+import com.example.nfc_sample_kotlin.util.RecordType
+import com.example.nfc_sample_kotlin.view.state.WriteDataState
 import com.example.nfc_sample_kotlin.api.WriteNdefMessage
 import java.util.*
 

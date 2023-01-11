@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nfc_sample_kotlin.logi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -14,7 +15,6 @@ class ActivityViewModel : ViewModel() {
     private val _newIntent = MutableSharedFlow<Intent>(replay = 0)
     val newIntent = _newIntent.asSharedFlow()
 
-    @Synchronized
     fun setNewIntent(intent: Intent) {
         viewModelScope.launch {
             _newIntent.emit(intent)
@@ -23,13 +23,10 @@ class ActivityViewModel : ViewModel() {
 
     init {
         logi("scanViewOnCreated: ")
-
     }
 
     override fun onCleared() {
         super.onCleared()
         logi("onCleared: ")
-
     }
-
 }

@@ -15,9 +15,8 @@ class DataViewHolder(private val binding: ItemMessageBinding) :
         binding.tvScanData.text = item.message
         binding.sv.setOnTouchListener(View.OnTouchListener { v, event ->
             onDataTouchListener?.onTouch(item, position, v, event)
-
+            v.performClick()
             return@OnTouchListener false
-
         })
     }
 

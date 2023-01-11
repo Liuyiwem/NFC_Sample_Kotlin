@@ -1,4 +1,4 @@
-package com.example.nfc_sample_kotlin.state
+package com.example.nfc_sample_kotlin.view.state
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

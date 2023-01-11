@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.example.nfc_sample_kotlin.base.BaseFragment
 import com.example.nfc_sample_kotlin.R
-import com.example.nfc_sample_kotlin.enum.RecordType
+import com.example.nfc_sample_kotlin.util.RecordType
 import com.example.nfc_sample_kotlin.viewmodel.WriteFragmentViewModel
 import com.example.nfc_sample_kotlin.api.ParseNdefMessageImpl.Companion.URI_PREFIX_MAP
 import com.example.nfc_sample_kotlin.databinding.AddRecordFragmentBinding
@@ -18,6 +21,11 @@ import com.example.nfc_sample_kotlin.hide
 import com.example.nfc_sample_kotlin.logi
 import com.example.nfc_sample_kotlin.model.Message
 import com.example.nfc_sample_kotlin.show
+import com.example.nfc_sample_kotlin.util.RecordType.Text
+import com.example.nfc_sample_kotlin.util.RecordType.Uri
+import com.example.nfc_sample_kotlin.viewmodel.WriteDataEvent
+import com.example.nfc_sample_kotlin.viewmodel.WriteDataEvent.EditWriteData
+import com.example.nfc_sample_kotlin.viewmodel.WriteDataEvent.SaveWriteData
 import org.koin.androidx.navigation.koinNavGraphViewModel
 
 private const val textTitle = "Enter your text"
@@ -42,18 +50,16 @@ class AddRecordFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onWriteDataClick()
+        onDataClick()
         initView()
         btnFunction()
         setHideKeyBoard()
         logi("onViewCreated${this.javaClass.hashCode()}")
-
     }
 
     override fun onStart() {
         super.onStart()
         logi(clickDataPosition.toString())
-
     }
 
     override fun onResume() {
@@ -62,12 +68,12 @@ class AddRecordFragment :
         if (clickItemData != null) {
             binding.apply {
                 btOk.text = editButtonString
-                if (clickItemRecordType == RecordType.Text) {
+                if (clickItemRecordType == Text) {
                     etText.setText(clickItemData)
                     tvTitle.text = textTitle
                     showEditTextRecordUI(this)
                 }
-                if (clickItemRecordType == RecordType.Uri) {
+                if (clickItemRecordType == Uri) {
                     etUri.setText(clickItemData)
                     tvTitle.text = uriTitle
                     showEditUriRecordUI(this)
@@ -78,8 +84,8 @@ class AddRecordFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        clearFragmentResultListener(writeFragmentClickPosition)
-        clearFragmentResultListener(writeFragmentClickItem)
+        clearFragmentResultListener(WRITE_FRAGMENT_CLICK_POSITION)
+        clearFragmentResultListener(WRITE_FRAGMENT_CLICK_ITEM)
         logi("onDestroy${this.javaClass.hashCode()}")
     }
 
@@ -129,34 +135,36 @@ class AddRecordFragment :
         binding.apply {
             btOk.setOnClickListener {
                 var writeData: String
-                if (etUri.visibility == View.INVISIBLE && etText.text.isNotEmpty() && clickDataPosition == noneClickDataPosition) {
+                if (etUri.isInvisible && etText.text.isNotEmpty() && clickDataPosition == noneClickDataPosition) {
                     writeData = etText.text.toString()
-                    writeFragmentViewModel.saveWriteData(RecordType.Text, writeData)
-
+                    writeFragmentViewModel.onEvent(SaveWriteData(Text, writeData))
                 }
-                if (etText.visibility == View.INVISIBLE && etUri.text.isNotEmpty() && clickDataPosition == noneClickDataPosition) {
+
+                if (etText.isInvisible && etUri.text.isNotEmpty() && clickDataPosition == noneClickDataPosition) {
                     writeData = spAddressTitle.selectedItem.toString() + etUri.text.toString()
-                    writeFragmentViewModel.saveWriteData(RecordType.Uri, writeData)
-
+                    writeFragmentViewModel.onEvent(SaveWriteData(Uri, writeData))
                 }
-                if (etUri.visibility == View.INVISIBLE && etText.text.isNotEmpty() && clickDataPosition != noneClickDataPosition) {
+
+                if (etUri.isInvisible && etText.text.isNotEmpty() && clickDataPosition != noneClickDataPosition) {
                     writeData = etText.text.toString()
-                    writeFragmentViewModel.editItemData(
-                        clickDataPosition,
-                        RecordType.Text,
-                        writeData
-                    )
-                    logi(writeData)
+                    writeFragmentViewModel.onEvent(EditWriteData(clickDataPosition, Text, writeData))
                 }
 
-                if (etText.visibility == View.INVISIBLE && etUri.text.isNotEmpty() && clickDataPosition != noneClickDataPosition) {
+                if (etText.isInvisible && etUri.text.isNotEmpty() && clickDataPosition != noneClickDataPosition) {
                     writeData = spAddressTitle.selectedItem.toString() + etUri.text.toString()
-                    writeFragmentViewModel.editItemData(
-                        clickDataPosition,
-                        RecordType.Uri,
-                        writeData
-                    )
+                    writeFragmentViewModel.onEvent(EditWriteData(clickDataPosition, Text, writeData))
                 }
+
+                if (etUri.text.isEmpty() && etText.isInvisible) {
+                    Toast.makeText(context, "The URI data is empty.", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+
+                if (etText.text.isEmpty() && etUri.isInvisible) {
+                    Toast.makeText(context, "The text data is empty.", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+
                 findNavController().navigate(R.id.action_addRecordFragment_to_writeFragment)
             }
             btCancel.setOnClickListener {
@@ -184,20 +192,19 @@ class AddRecordFragment :
         }
     }
 
-    private fun onWriteDataClick() {
-        setFragmentResultListener(writeFragmentClickPosition) { _, bundle ->
-            clickDataPosition = bundle.get(writedPosition) as Int
+    private fun onDataClick() {
+        setFragmentResultListener(WRITE_FRAGMENT_CLICK_POSITION) { _, bundle ->
+            clickDataPosition = bundle.get(WRITTEN_POSITION) as Int
             logi(clickDataPosition.toString())
         }
-        setFragmentResultListener(writeFragmentClickItem) { _, bundle ->
-            val result: Message = bundle.get(writedItem) as Message
+        setFragmentResultListener(WRITE_FRAGMENT_CLICK_ITEM) { _, bundle ->
+            val result: Message = bundle.get(WRITTEN_ITEM) as Message
             clickItemRecordType = result.recordType
 
-            if (clickItemRecordType == RecordType.Text) {
+            if (clickItemRecordType == Text) {
                 clickItemData = result.message
-
             }
-            if (clickItemRecordType == RecordType.Uri) {
+            if (clickItemRecordType == Uri) {
                 for (i in 1 until URI_PREFIX_MAP.size) {
                     if (result.message.startsWith(URI_PREFIX_MAP[i])) {
                         spPosition = i

@@ -1,7 +1,7 @@
-package com.example.nfc_sample_kotlin.usecase
+package com.example.nfc_sample_kotlin.viewmodel
 
 import android.content.Intent
-import com.example.nfc_sample_kotlin.enum.RecordType
+import com.example.nfc_sample_kotlin.util.RecordType
 
 sealed class WriteDataEvent{
     data class SaveWriteData(val recordType: RecordType,val writeData: String): WriteDataEvent()

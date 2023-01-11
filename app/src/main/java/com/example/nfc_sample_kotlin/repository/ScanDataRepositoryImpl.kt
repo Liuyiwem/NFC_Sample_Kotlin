@@ -10,5 +10,4 @@ class ScanDataScanDataRepositoryImpl(private val parseNdefMessage: ParseNdefMess
         return parseNdefMessage.parseToMessage(intent)
     }
 
-
 }

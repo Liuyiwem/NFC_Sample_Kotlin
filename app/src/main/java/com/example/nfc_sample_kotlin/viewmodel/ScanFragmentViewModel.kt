@@ -33,7 +33,7 @@ class ScanFragmentViewModel(private val scanDataUseCase: ScanDataUseCase) : View
     }
 
     override fun onCleared() {
-        super.onCleared()
         logi("onCleared: ")
+        super.onCleared()
     }
 }

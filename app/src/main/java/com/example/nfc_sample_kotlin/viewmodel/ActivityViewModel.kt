@@ -26,7 +26,7 @@ class ActivityViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
         logi("onCleared: ")
+        super.onCleared()
     }
 }

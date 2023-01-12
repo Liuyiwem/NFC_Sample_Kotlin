@@ -35,11 +35,12 @@ class DiModule {
         factory { ScanDataUseCase(scanDataRepository = get()) }
         factory {
             WriteDataUseCases(
-                SaveWriteDataUseCase(writeDataRepository = get()),
-                DeleteWriteDataUseCase(writeDataRepository = get()),
-                MoveWriteDataUseCase(writeDataRepository = get()),
-                EditWriteDataUseCase(writeDataRepository = get()),
-                WriteSavedDataUseCase(writeDataRepository = get())
+                SaveDataUseCase(writeDataRepository = get()),
+                DeleteDataUseCase(writeDataRepository = get()),
+                MoveDataUseCase(writeDataRepository = get()),
+                EditDataUseCase(writeDataRepository = get()),
+                GetSavedDataUseCase(writeDataRepository = get()),
+                WriteDataUseCase(writeDataRepository = get())
             )
         }
     }

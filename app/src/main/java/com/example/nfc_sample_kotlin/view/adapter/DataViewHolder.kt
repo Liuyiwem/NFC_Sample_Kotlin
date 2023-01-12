@@ -19,5 +19,4 @@ class DataViewHolder(private val binding: ItemMessageBinding) :
             return@OnTouchListener false
         })
     }
-
 }

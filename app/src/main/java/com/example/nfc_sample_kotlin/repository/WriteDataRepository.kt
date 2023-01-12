@@ -7,15 +7,17 @@ import com.example.nfc_sample_kotlin.view.state.WriteDataState
 
 interface WriteDataRepository {
 
-    fun saveWriteData(recordType: RecordType, writeData: String): List<Message>
+    fun saveData(recordType: RecordType, writeData: String): List<Message>
 
-    fun deleteWriteData(index: Int): List<Message>
+    fun deleteData(index: Int): List<Message>
 
-    fun moveWriteData(startPosition: Int, endPosition: Int): List<Message>
+    fun moveData(startPosition: Int, endPosition: Int): List<Message>
 
-    fun editWriteData(position: Int, recordType: RecordType, editItemData: String):List<Message>
+    fun editData(position: Int, recordType: RecordType, editItemData: String): List<Message>
 
-    suspend fun writeSavedData(intent: Intent): WriteDataState
+    fun getSavedData(): List<Message>
+
+    suspend fun writeData(intent: Intent): WriteDataState
 
 
 }

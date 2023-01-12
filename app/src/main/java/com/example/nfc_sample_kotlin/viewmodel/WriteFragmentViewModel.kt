@@ -28,30 +28,33 @@ class WriteFragmentViewModel(private val writeDataUseCases: WriteDataUseCases) :
     fun onEvent(event: WriteDataEvent) {
         when (event) {
             is WriteDataEvent.SaveWriteData -> _writeData.value =
-                writeDataUseCases.saveWriteDataUseCase(
+                writeDataUseCases.saveDataUseCase(
                     event.recordType,
                     event.writeData
                 )
 
             is WriteDataEvent.DeleteWriteData -> _writeData.value =
-                writeDataUseCases.deleteWriteDataUseCase(event.index)
+                writeDataUseCases.deleteDataUseCase(event.index)
 
             is WriteDataEvent.MoveWriteData -> _writeData.value =
-                writeDataUseCases.moveWriteDataUseCase(
+                writeDataUseCases.moveDataUseCase(
                     event.startPosition,
                     event.endPosition
                 )
 
             is WriteDataEvent.EditWriteData -> _writeData.value =
-                writeDataUseCases.editWriteDataUseCase(
+                writeDataUseCases.editDataUseCase(
                     event.position,
                     event.recordType,
                     event.editItemData
                 )
 
-            is WriteDataEvent.WriteSavedData -> {
+            is WriteDataEvent.GetSavedData -> _writeData.value =
+                writeDataUseCases.getSavedDataUseCase()
+
+            is WriteDataEvent.WriteData -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val response = writeDataUseCases.writeSavedDataUseCase(event.intent)
+                    val response = writeDataUseCases.writeDataUseCase(event.intent)
                     withContext(Dispatchers.Main) {
                         _writeNdefResult.emit(response)
                     }
@@ -61,7 +64,7 @@ class WriteFragmentViewModel(private val writeDataUseCases: WriteDataUseCases) :
     }
 
     override fun onCleared() {
-        super.onCleared()
         logi("onCleared: ")
+        super.onCleared()
     }
 }

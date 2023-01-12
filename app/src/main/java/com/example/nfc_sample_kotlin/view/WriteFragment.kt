@@ -64,11 +64,12 @@ class WriteFragment : BaseFragment<FragmentWriteBinding>(FragmentWriteBinding::i
     override fun onResume() {
         super.onResume()
         initObserve()
+        writeFragmentViewModel.onEvent(GetSavedData)
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         logi("onDestroy")
+        super.onDestroy()
     }
 
     private fun initView() {
@@ -87,7 +88,7 @@ class WriteFragment : BaseFragment<FragmentWriteBinding>(FragmentWriteBinding::i
                 viewModel.newIntent.collect {
                     if (connectTagEnable) {
                         logi("writeFragmentGetIntent: ${it.hashCode()}")
-                        writeFragmentViewModel.onEvent(WriteSavedData(it))
+                        writeFragmentViewModel.onEvent(WriteData(it))
                     }
                     if (!connectTagEnable || writeDataList.isEmpty()) {
                         Toast.makeText(

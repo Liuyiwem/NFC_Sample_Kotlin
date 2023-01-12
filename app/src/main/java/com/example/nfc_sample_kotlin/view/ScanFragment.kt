@@ -78,8 +78,8 @@ class ScanFragment() : Fragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         logi("onDestroy")
+        super.onDestroy()
     }
 
     private fun initView() {
@@ -109,7 +109,6 @@ class ScanFragment() : Fragment() {
                 }}
             }
         }
-
     }
 
     private fun initObserver() {

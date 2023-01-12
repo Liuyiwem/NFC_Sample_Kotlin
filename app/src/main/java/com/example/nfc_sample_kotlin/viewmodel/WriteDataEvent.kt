@@ -8,5 +8,6 @@ sealed class WriteDataEvent{
     data class DeleteWriteData(val index: Int): WriteDataEvent()
     data class MoveWriteData(val startPosition: Int, val endPosition: Int): WriteDataEvent()
     data class EditWriteData(val position: Int, val recordType: RecordType, val editItemData: String): WriteDataEvent()
-    data class WriteSavedData(val intent: Intent): WriteDataEvent()
+    object GetSavedData: WriteDataEvent()
+    data class WriteData(val intent: Intent): WriteDataEvent()
 }

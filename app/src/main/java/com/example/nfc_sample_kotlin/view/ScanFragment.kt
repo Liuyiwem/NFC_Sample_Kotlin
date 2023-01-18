@@ -1,13 +1,13 @@
 package com.example.nfc_sample_kotlin.view
 
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -31,7 +31,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 
-class ScanFragment() : Fragment() {
+class ScanFragment : Fragment() {
     private val viewModel by sharedViewModel<ActivityViewModel>()
     private val scanViewModel by viewModel<ScanFragmentViewModel>()
     private val scanDataAdapter: DataAdapter = DataAdapter()
@@ -53,8 +53,8 @@ class ScanFragment() : Fragment() {
         _binding = FragmentScanBinding.inflate(inflater, container, false)
 
         if (scanDataList.isNotEmpty()) {
-            binding.tvInit.visibility = INVISIBLE
-            binding.ivInit.visibility = INVISIBLE
+            binding.tvInit.isVisible = false
+            binding.ivInit.isVisible = false
         }
         logi("onCreateView")
         return binding.root
@@ -67,14 +67,10 @@ class ScanFragment() : Fragment() {
         logi("onViewCreated")
     }
 
-    override fun onResume() {
-        super.onResume()
-        initObserver()
-    }
-
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        logi("onDestroyView")
+        super.onDestroyView()
     }
 
     override fun onDestroy() {
@@ -88,7 +84,7 @@ class ScanFragment() : Fragment() {
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         scanDataAdapter.onDataTouchListener = object : OnDataTouchListener {
             override fun onTouch(item: Message, position: Int, view: View, event: MotionEvent) {
-                when(event.action){
+                when (event.action) {
 
                     MotionEvent.ACTION_DOWN -> {
                         startClickTime = Calendar.getInstance().timeInMillis
@@ -102,36 +98,14 @@ class ScanFragment() : Fragment() {
                         val clickDuration =
                             Calendar.getInstance().timeInMillis - startClickTime
                         if (clickDuration < MAX_CLICK_DURATION && item.recordType == RecordType.Uri) {
-                            val browserIntent =
-                                Intent(Intent.ACTION_VIEW, Uri.parse(item.message))
-                            startActivity(browserIntent)
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(item.message))
+                            try {
+                                startActivity(browserIntent)
+                            } catch (e: ActivityNotFoundException) {
+                                e.printStackTrace()
+                            }
                         }
-                }}
-            }
-        }
-    }
-
-    private fun initObserver() {
-        scanViewModel.ndefMessage.observe(viewLifecycleOwner) { scanDataState ->
-            when (scanDataState) {
-                is ScanDataState.Loading -> {
-                    binding.progressBar.isVisible = true
-                }
-                is ScanDataState.Success -> {
-                    binding.progressBar.isVisible = false
-                    binding.tvInit.isVisible = false
-                    binding.ivInit.isVisible = false
-                    val list = scanDataState.data
-                    if (list.isEmpty()) {
-                        Toast.makeText(context, "No NDEF Data", Toast.LENGTH_LONG).show()
-                    } else {
-                        scanDataAdapter.submitList(list)
                     }
-                }
-                is ScanDataState.Failure -> {
-                    val message = scanDataState.throwable.message
-                    binding.progressBar.isVisible = false
-                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -143,6 +117,33 @@ class ScanFragment() : Fragment() {
                 viewModel.newIntent.collect {
                     scanViewModel.getNdefMessage(it)
                     logi("scanFragmentGetIntent: ${it.hashCode()}")
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                scanViewModel.uiState.collect {
+                    when (it) {
+                        is ScanDataState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        is ScanDataState.Success -> {
+                            binding.progressBar.isVisible = false
+                            binding.tvInit.isVisible = false
+                            binding.ivInit.isVisible = false
+                            scanDataList = it.data
+                            if (scanDataList.isEmpty()) {
+                                Toast.makeText(context, "No NDEF Data", Toast.LENGTH_LONG).show()
+                            } else {
+                                scanDataAdapter.submitList(scanDataList)
+                            }
+                        }
+                        is ScanDataState.Failure -> {
+                            val message = it.throwable.message
+                            binding.progressBar.isVisible = false
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
             }
         }

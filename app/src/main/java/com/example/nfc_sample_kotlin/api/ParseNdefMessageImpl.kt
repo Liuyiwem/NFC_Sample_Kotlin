@@ -75,7 +75,7 @@ class ParseNdefMessageImpl : ParseNdefMessage {
             }
         }
         return flow {
-            emit(scanDataList)
+            emit(scanDataList.toList())
         }
     }
 
@@ -99,7 +99,7 @@ class ParseNdefMessageImpl : ParseNdefMessage {
     }
 
     private fun parseRTDURI(payload: ByteArray): String {
-        val prefix = URI_PREFIX_MAP[(payload[0].toInt() and 0xff)]
+        val prefix = URI_PREFIX_MAP[(payload[0].toInt())]
         val uri = String(payload, 1, payload.size - 1, Charsets.UTF_8)
         return prefix + uri
     }

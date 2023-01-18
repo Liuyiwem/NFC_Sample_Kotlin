@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nfc_sample_kotlin.*
-import com.example.nfc_sample_kotlin.base.BaseFragment
+import com.example.nfc_sample_kotlin.view.base.BaseFragment
 import com.example.nfc_sample_kotlin.view.state.WriteDataState
 import com.example.nfc_sample_kotlin.model.Message
 import com.example.nfc_sample_kotlin.view.adapter.DataAdapter

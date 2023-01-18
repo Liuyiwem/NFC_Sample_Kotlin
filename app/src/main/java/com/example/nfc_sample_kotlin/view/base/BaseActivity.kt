@@ -1,4 +1,4 @@
-package com.example.nfc_sample_kotlin.base
+package com.example.nfc_sample_kotlin.view.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

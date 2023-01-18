@@ -13,7 +13,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.nfc_sample_kotlin.base.BaseActivity
+import com.example.nfc_sample_kotlin.view.base.BaseActivity
 import com.example.nfc_sample_kotlin.R
 import com.example.nfc_sample_kotlin.viewmodel.ActivityViewModel
 import com.example.nfc_sample_kotlin.databinding.ActivityMainBinding

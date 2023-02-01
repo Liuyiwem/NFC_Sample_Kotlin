@@ -1,30 +1,27 @@
 package com.example.nfc_sample_kotlin.viewmodel
 
 import android.content.Intent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nfc_sample_kotlin.model.Message
-import com.example.nfc_sample_kotlin.repository.ScanDataRepository
 import com.example.nfc_sample_kotlin.logi
-import kotlinx.coroutines.Dispatchers
+import com.example.nfc_sample_kotlin.view.state.ScanDataState
+import com.example.nfc_sample_kotlin.usecase.ScanDataUseCase
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class ScanFragmentViewModel(private val scanDataRepository: ScanDataRepository) : ViewModel(){
+class ScanFragmentViewModel(private val scanDataUseCase: ScanDataUseCase) : ViewModel() {
 
-    private val _listNdefPayload = MutableLiveData<List<Message>>()
-    val listNdefPayload : LiveData<List<Message>> get() = _listNdefPayload
+    private val _uiState = MutableSharedFlow<ScanDataState<List<Message>>>(replay = 0)
+    val uiState = _uiState.asSharedFlow()
 
-    fun parseNdefMessage(intent: Intent){
-        viewModelScope.launch(Dispatchers.Default){
-            val response = scanDataRepository.parseNdefMessage(intent)
-            withContext(Dispatchers.Main){
-                _listNdefPayload.postValue(response)
-            }
+    fun getNdefMessage(intent: Intent) {
+        viewModelScope.launch {
+            scanDataUseCase(intent)
+                .onStart { _uiState.emit(ScanDataState.loading())}
+                .catch { _uiState.emit(ScanDataState.failure(it)) }
+                .collect { _uiState.emit(ScanDataState.success(it)) }
         }
-
     }
 
     init {
@@ -32,8 +29,7 @@ class ScanFragmentViewModel(private val scanDataRepository: ScanDataRepository) 
     }
 
     override fun onCleared() {
-        super.onCleared()
         logi("onCleared: ")
-
+        super.onCleared()
     }
 }

@@ -38,7 +38,6 @@
             android:layout_width="250dp"
             android:layout_height="60dp"
             android:text="NdefMessage"
-            android:autoLink="all"
             android:textColor="?colorAccent"
             android:textSize="20sp" />
 

@@ -5,7 +5,9 @@ import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
 import com.example.nfc_sample_kotlin.model.Message
-import com.example.nfc_sample_kotlin.enum.RecordType
+import com.example.nfc_sample_kotlin.util.RecordType
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.experimental.and
 
 
@@ -50,10 +52,9 @@ class ParseNdefMessageImpl : ParseNdefMessage {
             "urn:epc:raw:", // 0x21
             "urn:epc:", // 0x22
         )
-
     }
 
-    override suspend fun parseToMessage(intent: Intent): List<Message> {
+    override suspend fun parseToMessage(intent: Intent): Flow<List<Message>> {
 
         val scanDataList: MutableList<Message> = mutableListOf()
         (parseIntent(intent).records).forEach {
@@ -66,10 +67,16 @@ class ParseNdefMessageImpl : ParseNdefMessage {
                 if (it.type.contentEquals(NdefRecord.RTD_URI)) {
                     scanDataList.add(Message(RecordType.Uri,parseRTDURI(it.payload)))
                 }
-
             }
         }
-        return scanDataList.toList()
+        if (scanDataList.size == 0){
+            return flow {
+                throw IllegalArgumentException("This NFC Tag doesn't has a ndef record of RTD_TEXT or URI")
+            }
+        }
+        return flow {
+            emit(scanDataList.toList())
+        }
     }
 
     private fun parseIntent(intent: Intent): NdefMessage {
@@ -92,7 +99,7 @@ class ParseNdefMessageImpl : ParseNdefMessage {
     }
 
     private fun parseRTDURI(payload: ByteArray): String {
-        val prefix = URI_PREFIX_MAP[(payload[0].toInt() and 0xff)]
+        val prefix = URI_PREFIX_MAP[(payload[0].toInt())]
         val uri = String(payload, 1, payload.size - 1, Charsets.UTF_8)
         return prefix + uri
     }

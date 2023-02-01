@@ -14,7 +14,6 @@ class ActivityViewModel : ViewModel() {
     private val _newIntent = MutableSharedFlow<Intent>(replay = 0)
     val newIntent = _newIntent.asSharedFlow()
 
-    @Synchronized
     fun setNewIntent(intent: Intent) {
         viewModelScope.launch {
             _newIntent.emit(intent)
@@ -23,13 +22,10 @@ class ActivityViewModel : ViewModel() {
 
     init {
         logi("scanViewOnCreated: ")
-
     }
 
     override fun onCleared() {
-        super.onCleared()
         logi("onCleared: ")
-
+        super.onCleared()
     }
-
 }

@@ -8,7 +8,7 @@ import com.example.nfc_sample_kotlin.model.Message
 import com.example.nfc_sample_kotlin.databinding.ItemMessageBinding
 
 
-class DataAdapter : ListAdapter<Message,DataViewHolder>(DataDiffItemCallback()) {
+class DataAdapter : ListAdapter<Message, DataViewHolder>(DataDiffItemCallback()) {
 
     var onDataTouchListener: OnDataTouchListener? = null
 
@@ -17,9 +17,10 @@ class DataAdapter : ListAdapter<Message,DataViewHolder>(DataDiffItemCallback()) 
         val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DataViewHolder(binding)
     }
+
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
 
-        holder.bind(getItem(position),position)
+        holder.bind(getItem(position), position)
         holder.onDataTouchListener = onDataTouchListener
     }
 }

@@ -13,7 +13,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.nfc_sample_kotlin.base.BaseActivity
+import com.example.nfc_sample_kotlin.view.base.BaseActivity
 import com.example.nfc_sample_kotlin.R
 import com.example.nfc_sample_kotlin.viewmodel.ActivityViewModel
 import com.example.nfc_sample_kotlin.databinding.ActivityMainBinding
@@ -33,19 +33,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         initView()
         checkNFCAdapter()
         logi("onCreate")
-
     }
 
     override fun onResume() {
         super.onResume()
         mNfcAdapter?.enableForegroundDispatch(this, mPendingIntent, null, null)
-
     }
 
     override fun onPause() {
         super.onPause()
         mNfcAdapter?.disableForegroundDispatch(this)
-
     }
 
     override fun onDestroy() {
@@ -58,12 +55,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action){
             viewModel.setNewIntent(intent)
             logi("onNewIntent: ${intent.hashCode()}")
-
         }
     }
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-
     }
 
     private fun initView() {
@@ -75,7 +70,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         bottomNavigationView.setupWithNavController(navController)
         appBarConfiguration = AppBarConfiguration(setOf(R.id.scanFragment,R.id.writeFragment))
         setupActionBarWithNavController(navController,appBarConfiguration)
-
     }
 
     private fun checkNFCAdapter() {
@@ -87,7 +81,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             val myDialog = builder.create()
             myDialog.setCanceledOnTouchOutside(false)
             myDialog.show()
-
         }
 
         if (!mNfcAdapter!!.isEnabled) {
@@ -99,7 +92,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             val myDialog = builder.create()
             myDialog.setCanceledOnTouchOutside(false)
             myDialog.show()
-
         }
 
         if (mNfcAdapter!!.isEnabled) {
@@ -108,5 +100,4 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             )
         }
     }
-
 }

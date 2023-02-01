@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.clearFragmentResultListener
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
-import com.example.nfc_sample_kotlin.base.BaseFragment
+import com.example.nfc_sample_kotlin.view.base.BaseFragment
 import com.example.nfc_sample_kotlin.R
-import com.example.nfc_sample_kotlin.enum.RecordType
+import com.example.nfc_sample_kotlin.util.RecordType
 import com.example.nfc_sample_kotlin.viewmodel.WriteFragmentViewModel
 import com.example.nfc_sample_kotlin.api.ParseNdefMessageImpl.Companion.URI_PREFIX_MAP
 import com.example.nfc_sample_kotlin.databinding.AddRecordFragmentBinding
@@ -18,22 +19,26 @@ import com.example.nfc_sample_kotlin.hide
 import com.example.nfc_sample_kotlin.logi
 import com.example.nfc_sample_kotlin.model.Message
 import com.example.nfc_sample_kotlin.show
+import com.example.nfc_sample_kotlin.util.RecordType.Text
+import com.example.nfc_sample_kotlin.util.RecordType.Uri
+import com.example.nfc_sample_kotlin.viewmodel.WriteDataEvent.EditWriteData
+import com.example.nfc_sample_kotlin.viewmodel.WriteDataEvent.SaveWriteData
 import org.koin.androidx.navigation.koinNavGraphViewModel
 
-private const val textTitle = "Enter your text"
-private const val uriTitle = "Enter your URL"
-private const val editButtonString = "Edit"
-private const val initSpPosition = 1
-private const val noneClickDataPosition = -1
+private const val TEXT_TITLE = "Enter your text"
+private const val URI_TITLE = "Enter your URL"
+private const val EDIT_BUTTON_STRING = "Edit"
+private const val INIT_SP_POSITION = 1
+private const val NONE_CLICK_DATA_POSITION = -1
 
 class AddRecordFragment :
     BaseFragment<AddRecordFragmentBinding>(AddRecordFragmentBinding::inflate) {
 
     private val writeFragmentViewModel by koinNavGraphViewModel<WriteFragmentViewModel>(R.id.nav_writefragment)
-    private var clickDataPosition: Int = noneClickDataPosition
-    private var spPosition = initSpPosition
+    private var clickDataPosition: Int = NONE_CLICK_DATA_POSITION
+    private var spPosition = INIT_SP_POSITION
     private var clickItemData: String? = null
-    private var clickItemRecordType: RecordType? = null
+    private var itemRecordType: RecordType? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,44 +47,25 @@ class AddRecordFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onWriteDataClick()
+        onClickedDateCheck()
         initView()
         btnFunction()
         setHideKeyBoard()
         logi("onViewCreated${this.javaClass.hashCode()}")
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        logi(clickDataPosition.toString())
-
     }
 
     override fun onResume() {
         super.onResume()
         logi(clickDataPosition.toString())
         if (clickItemData != null) {
-            binding.apply {
-                btOk.text = editButtonString
-                if (clickItemRecordType == RecordType.Text) {
-                    etText.setText(clickItemData)
-                    tvTitle.text = textTitle
-                    showEditTextRecordUI(this)
-                }
-                if (clickItemRecordType == RecordType.Uri) {
-                    etUri.setText(clickItemData)
-                    tvTitle.text = uriTitle
-                    showEditUriRecordUI(this)
-                }
-            }
+            showClickedData()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        clearFragmentResultListener(writeFragmentClickPosition)
-        clearFragmentResultListener(writeFragmentClickItem)
+        clearFragmentResultListener(WRITE_FRAGMENT_CLICK_POSITION)
+        clearFragmentResultListener(WRITE_FRAGMENT_CLICK_ITEM)
         logi("onDestroy${this.javaClass.hashCode()}")
     }
 
@@ -91,17 +77,13 @@ class AddRecordFragment :
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.format_text -> {
-                binding.apply {
-                    tvTitle.text = textTitle
-                    showEditTextRecordUI(this)
-                }
+                itemRecordType = Text
+                showRecordUI(null, null)
                 true
             }
             R.id.format_uri -> {
-                binding.apply {
-                    tvTitle.text = uriTitle
-                    showEditUriRecordUI(this)
-                }
+                itemRecordType = Uri
+                showRecordUI(null, null)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -118,44 +100,39 @@ class AddRecordFragment :
                     URI_PREFIX_MAP
                 )
             }
-            if (clickItemRecordType == null) {
+            if (itemRecordType == null) {
                 initEditUI(this)
             }
             spAddressTitle.setSelection(spPosition)
         }
     }
 
+    private fun showClickedData() {
+        showRecordUI(clickItemData, EDIT_BUTTON_STRING)
+
+    }
+
     private fun btnFunction() {
         binding.apply {
             btOk.setOnClickListener {
                 var writeData: String
-                if (etUri.visibility == View.INVISIBLE && etText.text.isNotEmpty() && clickDataPosition == noneClickDataPosition) {
-                    writeData = etText.text.toString()
-                    writeFragmentViewModel.saveWriteData(RecordType.Text, writeData)
-
+                if (itemRecordType == Text) {
+                    if (etText.text.isEmpty()) {
+                        Toast.makeText(context, "The Text data is empty.", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    } else {
+                        writeData = etText.text.toString()
+                        editDataToViewModel(writeData)
+                    }
                 }
-                if (etText.visibility == View.INVISIBLE && etUri.text.isNotEmpty() && clickDataPosition == noneClickDataPosition) {
-                    writeData = spAddressTitle.selectedItem.toString() + etUri.text.toString()
-                    writeFragmentViewModel.saveWriteData(RecordType.Uri, writeData)
-
-                }
-                if (etUri.visibility == View.INVISIBLE && etText.text.isNotEmpty() && clickDataPosition != noneClickDataPosition) {
-                    writeData = etText.text.toString()
-                    writeFragmentViewModel.editItemData(
-                        clickDataPosition,
-                        RecordType.Text,
-                        writeData
-                    )
-                    logi(writeData)
-                }
-
-                if (etText.visibility == View.INVISIBLE && etUri.text.isNotEmpty() && clickDataPosition != noneClickDataPosition) {
-                    writeData = spAddressTitle.selectedItem.toString() + etUri.text.toString()
-                    writeFragmentViewModel.editItemData(
-                        clickDataPosition,
-                        RecordType.Uri,
-                        writeData
-                    )
+                if (itemRecordType == Uri) {
+                    if (etUri.text.isEmpty()) {
+                        Toast.makeText(context, "The Uri data is empty.", Toast.LENGTH_LONG).show()
+                        return@setOnClickListener
+                    } else {
+                        writeData = spAddressTitle.selectedItem.toString() + etUri.text.toString()
+                        editDataToViewModel(writeData)
+                    }
                 }
                 findNavController().navigate(R.id.action_addRecordFragment_to_writeFragment)
             }
@@ -184,20 +161,34 @@ class AddRecordFragment :
         }
     }
 
-    private fun onWriteDataClick() {
-        setFragmentResultListener(writeFragmentClickPosition) { _, bundle ->
-            clickDataPosition = bundle.get(writedPosition) as Int
+    private fun editDataToViewModel(writeData: String) {
+        if (clickDataPosition == NONE_CLICK_DATA_POSITION) {
+            writeFragmentViewModel.onEvent(SaveWriteData(itemRecordType!!, writeData))
+        }
+        if (clickDataPosition != NONE_CLICK_DATA_POSITION) {
+            writeFragmentViewModel.onEvent(
+                EditWriteData(
+                    clickDataPosition,
+                    itemRecordType!!,
+                    writeData
+                )
+            )
+        }
+    }
+
+    private fun onClickedDateCheck() {
+        setFragmentResultListener(WRITE_FRAGMENT_CLICK_POSITION) { _, bundle ->
+            clickDataPosition = bundle.get(WRITTEN_POSITION) as Int
             logi(clickDataPosition.toString())
         }
-        setFragmentResultListener(writeFragmentClickItem) { _, bundle ->
-            val result: Message = bundle.get(writedItem) as Message
-            clickItemRecordType = result.recordType
+        setFragmentResultListener(WRITE_FRAGMENT_CLICK_ITEM) { _, bundle ->
+            val result: Message = bundle.get(WRITTEN_ITEM) as Message
+            itemRecordType = result.recordType
 
-            if (clickItemRecordType == RecordType.Text) {
+            if (itemRecordType == Text) {
                 clickItemData = result.message
-
             }
-            if (clickItemRecordType == RecordType.Uri) {
+            if (itemRecordType == Uri) {
                 for (i in 1 until URI_PREFIX_MAP.size) {
                     if (result.message.startsWith(URI_PREFIX_MAP[i])) {
                         spPosition = i
@@ -210,16 +201,33 @@ class AddRecordFragment :
         }
     }
 
-    private fun showEditTextRecordUI(binding: AddRecordFragmentBinding) {
-        binding.etText.show()
-        binding.etUri.hide()
-        binding.spAddressTitle.hide()
-    }
+    private fun showRecordUI(textContent: String?, btTitle: String?) {
+        binding.apply {
 
-    private fun showEditUriRecordUI(binding: AddRecordFragmentBinding) {
-        binding.etText.hide()
-        binding.etUri.show()
-        binding.spAddressTitle.show()
+            btTitle?.let {
+                btOk.text = btTitle
+            }
+
+            if (itemRecordType == Text) {
+                textContent?.let {
+                    etText.setText(textContent)
+                }
+                tvTitle.text = TEXT_TITLE
+                etText.show()
+                etUri.hide()
+                spAddressTitle.hide()
+            }
+            if (itemRecordType == Uri) {
+                textContent?.let {
+                    etUri.setText(textContent)
+                }
+                spAddressTitle.setSelection(spPosition)
+                tvTitle.text = URI_TITLE
+                binding.etText.hide()
+                binding.etUri.show()
+                binding.spAddressTitle.show()
+            }
+        }
     }
 
     private fun initEditUI(binding: AddRecordFragmentBinding) {
@@ -227,5 +235,4 @@ class AddRecordFragment :
         binding.etUri.hide()
         binding.spAddressTitle.hide()
     }
-
 }
